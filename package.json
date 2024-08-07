@@ -1,0 +1,25 @@
+{
+  "name": "learn-express",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "nodemon app"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "description": "",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/turegold/tasty_tunes.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/turegold/tasty_tunes/issues"
+  },
+  "homepage": "https://github.com/turegold/tasty_tunes#readme"
+}

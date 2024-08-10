@@ -7,11 +7,32 @@ const morgan = require('morgan');//서버에서 요청과 응답을 기록하는
 
 //morgan: 1.dev: 간단하게 표시(개발 시) 2.combined: 더 자세히 표시(배포 시)
 app.use(morgan('dev'));
+
+//static(html,css,js 같은 정적 파일을 보내기 위해 사용), 미들웨어간 순서 중요!
+//app.use('요청 경로', express.static('실제 경로'));
+app.use('/', express.static(__dirname, 'public'));
+
 //cookie-parser: 쿠키를 알아서 객체로 파싱시킴
 app.use(cookieParser('yongmin'));
+
+//express-session(개인의 저장 공간(세션)을 만들어 줌)
+app.use(session(session({
+    resave: false,
+    saveUninitialized: false,
+    secret: 'youngmin', //보통 쿠키 파서와 같음
+    cookie:{ //세션에도 쿠키 사용
+        httpyOnly: true,
+    },
+})));
+
+app.use('/',(req,res,next)=>{
+    express.static(__dirname, 'public');
+})
+
 //body-parser(이 두개는 보통 사용 함)
 app.use(express.json()); //json 데이터를 파싱해서 req.body에 넣음
 app.use(express.urlencoded({extended: true})); //form을 파싱
+
 
 app.use((req,res, next)=>{
     console.log('모든 요청에 실행하고싶어요');//미들웨어: 모든 라우터에 실행하는 모듈
@@ -21,21 +42,7 @@ app.use((req,res, next)=>{
 
 
 app.get('/',(req,res)=>{ //3000번에 접속하면 메세지 전송
-    /*
-    req.cookies
-    req.signedCookies; //쿠키 암호화
-    //쿠키 생성
-    res.cookie('name', encodeURIComponent(name),{
-        expires: new Date(),
-        httpOnly: true,
-        path: '/'
-    })
-    //쿠키 삭제
-    res.clearCookie('name', encodeURIComponent(name),{
-        httpOnly:true,
-        path: '/',
-    })
-    */
+    res.session.id = 'hello' //사용자에 대한 고유한 세션
     res.sendFile(path.join(__dirname,'./index.html'));//현재 경로 + ./index.html
 });
 

@@ -1,29 +1,37 @@
+const dotenv = require('dotenv');
+app.use(morgan('dev'));//dotenv는 최대한 위에
 const express = require('express');
 const path = require('path'); //path 사용
 const app = express();
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');//서버에서 요청과 응답을 기록하는 라우터
-//6-5까지
-
+//6-11까지
+//multer: 이미지 업로드 할 때 사용
+//dotenv: 비밀키를 해커로부터 숨길 수 있음
 //morgan: 1.dev: 간단하게 표시(개발 시) 2.combined: 더 자세히 표시(배포 시)
-app.use(morgan('dev'));
+dotenv.config();
 
+const indexRouter = require('/routes');
+const userRouter = require('/routes/user');
 //static(html,css,js 같은 정적 파일을 보내기 위해 사용), 미들웨어간 순서 중요!
 //app.use('요청 경로', express.static('실제 경로'));
 app.use('/', express.static(__dirname, 'public'));
 
 //cookie-parser: 쿠키를 알아서 객체로 파싱시킴
-app.use(cookieParser('yongmin'));
+app.use(cookieParser(process.env.COOKIE_SECRET));
 
 //express-session(개인의 저장 공간(세션)을 만들어 줌)
 app.use(session(session({
     resave: false,
     saveUninitialized: false,
-    secret: 'youngmin', //보통 쿠키 파서와 같음
+    secret: process.env.COOKIE_SECRET, //보통 쿠키 파서와 같음(환경변수에 쿠키를 숨김)
     cookie:{ //세션에도 쿠키 사용
         httpyOnly: true,
     },
 })));
+
+app.use('/', indexRouter);
+app.use('/user', userRouter)
 
 app.use('/',(req,res,next)=>{
     express.static(__dirname, 'public');
